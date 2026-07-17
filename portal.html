@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu análisis — PropMatchRD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap" id="contenido">
+  <div class="loading">Cargando tu análisis…</div>
+</div>
+
+<script src="app.js"></script>
+<script>
+(async function () {
+  const codigo = obtenerParametro('codigo') || obtenerParametro('portal');
+  if (!codigo) { mostrarError('contenido', 'Falta tu código de acceso en el enlace.'); return; }
+
+  try {
+    const datos = await llamarApi({ portal: codigo });
+    if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+
+    const g = datos.gastos;
+    document.getElementById('contenido').innerHTML =
+      '<span class="eyebrow">' + datos.clasificacion + '</span>' +
+      '<h1>Hola ' + datos.nombre + '</h1>' +
+
+      '<div class="card"><p style="font-size:16px;color:var(--ink);margin:0">' + datos.analisisPersonalizado + '</p></div>' +
+
+      '<div class="stat-grid">' +
+      '<div class="stat"><span class="num">' + datos.indicePreparacionPct + '%</span><span class="label">Índice de Preparación</span></div>' +
+      '<div class="stat"><span class="num">' + datos.probabilidadFinanciamientoPct + '%</span><span class="label">Probabilidad de Financiamiento</span></div>' +
+      '</div>' +
+
+      '<div class="card"><h3>Tu Ruta de Compra</h3><div class="ruta">' +
+      construirRutaHtml(datos.etapaRutaCompra, datos.etapasRutaCompra) + '</div></div>' +
+
+      '<div class="card"><h3>💰 Gastos a considerar (más allá del precio)</h3><table>' +
+      '<tr><td>Inicial (aprox.)</td><td class="num">' + formatoRD(g.inicial) + '</td></tr>' +
+      '<tr><td>Transferencia</td><td class="num">' + formatoRD(g.transferencia) + '</td></tr>' +
+      '<tr><td>Seguro (mensual)</td><td class="num">' + formatoRD(g.seguroMin) + ' - ' + formatoRD(g.seguroMax) + '</td></tr>' +
+      '<tr><td>Tasación</td><td class="num">' + formatoRD(g.tasacionMin) + ' - ' + formatoRD(g.tasacionMax) + '</td></tr>' +
+      '<tr><td>Gastos de cierre</td><td class="num">' + formatoRD(g.cierreMin) + ' - ' + formatoRD(g.cierreMax) + '</td></tr>' +
+      '<tr><td>IPI (anual)</td><td class="num">' + (g.aplicaIPI ? formatoRD(g.ipiAnual) : 'No aplica') + '</td></tr>' +
+      '<tr><td style="font-weight:700">Total estimado para iniciar</td><td class="num" style="font-weight:700">' + formatoRD(g.totalMin) + ' - ' + formatoRD(g.totalMax) + '</td></tr>' +
+      '</table><p style="font-size:11px;margin-top:8px">Estimados de referencia — confirma cifras con tu banco y abogado.</p></div>' +
+
+      (datos.faltantes.length
+        ? '<div class="card"><h3>¿Qué sigue?</h3><ul>' + datos.faltantes.map(f => '<li>' + f + '</li>').join('') + '</ul></div>'
+        : '<div class="alert success">Tu perfil está completo — tu agente te contactará pronto.</div>') +
+
+      (datos.alertaPresupuesto ? '<div class="alert">' + datos.alertaPresupuesto + '</div>' : '') +
+
+      (datos.certificadoUrl ? '<p style="text-align:center"><a class="btn btn-primary" href="' + datos.certificadoUrl + '">📄 Ver mi Certificado</a></p>' : '') +
+
+      '<p class="footer-note">Código: ' + datos.idComprador + '</p>';
+  } catch (err) {
+    mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
+  }
+})();
+</script>
+</body>
+</html>

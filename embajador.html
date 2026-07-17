@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Te invitaron a PropMatchRD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap" id="contenido">
+  <div class="loading">Cargando…</div>
+</div>
+
+<script src="app.js"></script>
+<script>
+(async function () {
+  const codigo = obtenerParametro('codigo') || obtenerParametro('ref');
+  if (!codigo) { mostrarError('contenido', 'Falta el código de referido en el enlace.'); return; }
+
+  try {
+    const datos = await llamarApi({ ref: codigo });
+    if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+
+    const saludo = datos.nombreEmbajador ? datos.nombreEmbajador + ' te invitó a PropMatchRD' : 'Te invitaron a PropMatchRD';
+    document.getElementById('contenido').innerHTML =
+      '<div style="text-align:center;padding-top:40px">' +
+      '<span class="eyebrow">Invitación personal</span>' +
+      '<h1>' + saludo + '</h1>' +
+      '<p>Te conectamos con un agente inmobiliario verificado en menos de 3 minutos.</p>' +
+      (datos.linkFormularioComprador
+        ? '<p style="margin-top:24px"><a class="btn btn-primary" href="' + datos.linkFormularioComprador + '">Comenzar ahora →</a></p>'
+        : '<p style="color:var(--coral)">Este enlace no está disponible en este momento.</p>') +
+      '</div>';
+
+    if (datos.linkFormularioComprador) {
+      setTimeout(() => { window.location.href = datos.linkFormularioComprador; }, 4000);
+    }
+  } catch (err) {
+    mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
+  }
+})();
+</script>
+</body>
+</html>

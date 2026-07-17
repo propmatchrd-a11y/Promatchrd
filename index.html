@@ -1,9 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>PropMatchRD</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PropMatchRD — Compra tu propiedad con acompañamiento real</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>¡Mi sitio funciona!</h1>
+<div class="wrap">
+
+  <span class="eyebrow">PropMatchRD</span>
+  <h1>No vendemos leads.<br>Acompañamos una compra.</h1>
+  <p>Conectamos compradores verificados con agentes inmobiliarios reales en República Dominicana —
+  y seguimos con ustedes en cada paso, desde la primera evaluación hasta la llave en mano.</p>
+
+  <div class="card">
+    <h3>Tu recorrido, siempre visible</h3>
+    <div class="ruta">
+      <div class="ruta-paso hecho"><div class="ruta-nodo">✓</div><div class="ruta-texto">Evaluación</div></div>
+      <div class="ruta-paso hecho"><div class="ruta-nodo">✓</div><div class="ruta-texto">Comprador Verificado</div></div>
+      <div class="ruta-paso actual"><div class="ruta-nodo">●</div><div class="ruta-texto">Agente Asignado</div></div>
+      <div class="ruta-paso"><div class="ruta-nodo">○</div><div class="ruta-texto">Visita 1</div></div>
+      <div class="ruta-paso"><div class="ruta-nodo">○</div><div class="ruta-texto">Nueva búsqueda</div></div>
+      <div class="ruta-paso"><div class="ruta-nodo">○</div><div class="ruta-texto">Visita 2+</div></div>
+      <div class="ruta-paso"><div class="ruta-nodo">○</div><div class="ruta-texto">Reserva</div></div>
+      <div class="ruta-paso"><div class="ruta-nodo">○</div><div class="ruta-texto">Compra</div></div>
+    </div>
+    <p style="margin:0;font-size:13px">Un rechazo en una visita nunca es un callejón sin salida — ajustamos la búsqueda y seguimos.</p>
+  </div>
+
+  <h2>Encuentra tu portal</h2>
+  <div class="entry-grid">
+
+    <div class="entry-card">
+      <span class="eyebrow">Comprador</span>
+      <h3>Tu análisis y tu recorrido</h3>
+      <p>Recibiste un link personal por correo con tu código. Si lo tienes a mano, pégalo aquí:</p>
+      <div class="code-input">
+        <input type="text" id="codigoComprador" placeholder="Tu código privado">
+        <button class="btn btn-primary btn-sm" onclick="irA('portal.html','codigo','codigoComprador')">Entrar</button>
+      </div>
+    </div>
+
+    <div class="entry-card">
+      <span class="eyebrow">Agente</span>
+      <h3>Tu cartera y tu desempeño</h3>
+      <p>Recibiste tu Panel de Agente por correo al verificarte. Pega tu código aquí:</p>
+      <div class="code-input">
+        <input type="text" id="codigoAgente" placeholder="Tu código privado">
+        <button class="btn btn-primary btn-sm" onclick="irA('panel.html','codigo','codigoAgente')">Entrar</button>
+      </div>
+    </div>
+
+    <div class="entry-card">
+      <span class="eyebrow">Embajador</span>
+      <h3>Comparte, gana comisión</h3>
+      <p>¿Conoces a alguien buscando comprar? Únete a la Red de Embajadores y obtén tu propio enlace de referido.</p>
+      <a class="btn btn-coral btn-sm" href="#" id="linkUnirmeEmbajador">Únete a la Red de Embajadores</a>
+    </div>
+
+  </div>
+
+  <p class="footer-note">PropMatchRD — Marketplace de compradores verificados en República Dominicana.</p>
+</div>
+
+<script src="app.js"></script>
+<script>
+  function irA(pagina, param, inputId) {
+    const valor = document.getElementById(inputId).value.trim();
+    if (!valor) return;
+    window.location.href = pagina + '?' + param + '=' + encodeURIComponent(valor);
+  }
+</script>
 </body>
 </html>
