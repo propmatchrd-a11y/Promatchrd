@@ -35,17 +35,19 @@ body {
   -webkit-font-smoothing: antialiased;
 
   /* Fondo moderno generado por código — degradado de marca + textura de
-     puntos sutil, en vez de una foto de stock (evita el look genérico de
-     "casa con familia sonriendo" Y cualquier riesgo de derechos de autor,
-     ya que no se descarga ninguna imagen de terceros). */
+     puntos, en vez de una foto de stock (evita el look genérico de "casa
+     con familia sonriendo" Y cualquier riesgo de derechos de autor, ya que
+     no se descarga ninguna imagen de terceros). */
   background-color: var(--sand);
   background-image:
-    radial-gradient(circle at 15% 10%, rgba(15, 122, 107, 0.10) 0%, transparent 40%),
-    radial-gradient(circle at 85% 25%, rgba(228, 87, 46, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(15, 122, 107, 0.07) 0%, transparent 50%),
-    radial-gradient(circle, rgba(16, 35, 28, 0.06) 1px, transparent 1.5px);
-  background-size: auto, auto, auto, 22px 22px;
-  background-attachment: fixed, fixed, fixed, fixed;
+    radial-gradient(circle at 10% 5%, rgba(15, 122, 107, 0.28) 0%, transparent 42%),
+    radial-gradient(circle at 90% 20%, rgba(228, 87, 46, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 20% 95%, rgba(228, 87, 46, 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 80% 90%, rgba(15, 122, 107, 0.20) 0%, transparent 50%),
+    radial-gradient(circle, rgba(16, 35, 28, 0.14) 1.5px, transparent 2px);
+  background-size: auto, auto, auto, auto, 24px 24px;
+  background-attachment: fixed, fixed, fixed, fixed, fixed;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
 }
 
 .wrap {
