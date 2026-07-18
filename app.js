@@ -16,6 +16,20 @@ async function llamarApi(params) {
   return resp.json();
 }
 
+async function ejecutarAccion(params) {
+  const url = API_BASE + '?api=1&' + new URLSearchParams(params).toString();
+  const resp = await fetch(url);
+  return resp.json();
+}
+
+function guardarCodigoRecordado(tipo, codigo) {
+  try { localStorage.setItem('propmatch_' + tipo, codigo); } catch (e) { /* si el navegador bloquea localStorage, simplemente no se recuerda */ }
+}
+
+function obtenerCodigoRecordado(tipo) {
+  try { return localStorage.getItem('propmatch_' + tipo) || ''; } catch (e) { return ''; }
+}
+
 function mostrarError(contenedorId, mensaje) {
   document.getElementById(contenedorId).innerHTML =
     '<div class="card"><h3>No pudimos cargar esto</h3><p>' + mensaje + '</p></div>';

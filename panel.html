@@ -20,6 +20,7 @@
     if (idContacto) params.contacto = idContacto;
     const datos = await llamarApi(params);
     if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+    guardarCodigoRecordado('agente', CODIGO_PANEL); // automatización: la próxima vez, index.html ya lo recuerda
 
     const filas = datos.compradores.map(c =>
       '<tr><td>' + c.id + '</td><td>' + c.nombre + '</td><td>' + c.etapaRutaCompra + '</td><td>' + c.ipcEtiqueta + '</td>' +
@@ -27,6 +28,8 @@
         ? '<button class="btn btn-primary btn-sm" onclick="cargarPanel(\'' + c.id + '\')">Marcar contacto</button>'
         : '✅') + '</td></tr>'
     ).join('');
+
+    const disponible = datos.disponibilidad !== 'No';
 
     document.getElementById('contenido').innerHTML =
       (datos.mensajeContacto ? datos.mensajeContacto : '') +
@@ -48,7 +51,40 @@
       (datos.compradores.length
         ? '<table><tr style="font-weight:700"><td>ID</td><td>Nombre</td><td>Ruta</td><td>IPC</td><td>Contacto</td></tr>' + filas + '</table>'
         : '<p>No tienes compradores activos en este momento.</p>') +
-      '</div>';
+      '</div>' +
+
+      '<div class="card"><h3>⚙️ Mi disponibilidad</h3>' +
+      '<p style="font-size:13px">Desactívala si no puedes recibir compradores nuevos ahora (vacaciones, sobrecarga, etc.) — se reactiva cuando quieras, sin depender del admin.</p>' +
+      '<button class="btn ' + (disponible ? 'btn-primary' : 'btn-outline') + '" onclick="cambiarDisponibilidad(\'Sí\')">✅ Disponible</button> ' +
+      '<button class="btn ' + (!disponible ? 'btn-coral' : 'btn-outline') + '" onclick="cambiarDisponibilidad(\'No\')">⏸️ No disponible</button>' +
+      '</div>' +
+
+      '<div class="card"><h3>⚙️ Mi información</h3>' +
+      '<label style="font-size:13px">Teléfono</label>' +
+      '<div class="code-input"><input type="text" id="inputTelefonoAgente" value="' + datos.telefono + '">' +
+      '<button class="btn btn-outline btn-sm" onclick="guardarCampoAgente(\'actualizarTelefono\',\'inputTelefonoAgente\')">Guardar</button></div>' +
+      '<label style="font-size:13px;margin-top:10px;display:block">Correo</label>' +
+      '<div class="code-input"><input type="text" id="inputEmailAgente" value="' + datos.email + '">' +
+      '<button class="btn btn-outline btn-sm" onclick="guardarCampoAgente(\'actualizarEmail\',\'inputEmailAgente\')">Guardar</button></div>' +
+      '<p id="mensajeGuardadoAgente" style="font-size:13px;margin-top:8px"></p></div>';
+  }
+
+  async function cambiarDisponibilidad(valor) {
+    await ejecutarAccion({ panel: CODIGO_PANEL, accion: 'toggleDisponibilidad', valor: valor });
+    cargarPanel();
+  }
+
+  async function guardarCampoAgente(accion, inputId) {
+    const valor = document.getElementById(inputId).value.trim();
+    if (!valor) return;
+    const msj = document.getElementById('mensajeGuardadoAgente');
+    msj.textContent = 'Guardando…';
+    try {
+      const resultado = await ejecutarAccion({ panel: CODIGO_PANEL, accion: accion, valor: valor });
+      msj.textContent = resultado.error ? '⚠️ ' + resultado.mensaje : '✅ Guardado.';
+    } catch (e) {
+      msj.textContent = '⚠️ No se pudo guardar. Intenta de nuevo.';
+    }
   }
 
   (async function () {

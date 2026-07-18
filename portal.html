@@ -20,11 +20,14 @@
   try {
     const datos = await llamarApi({ portal: codigo });
     if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+    guardarCodigoRecordado('comprador', codigo); // automatización: la próxima vez, index.html ya lo recuerda
 
     const g = datos.gastos;
     document.getElementById('contenido').innerHTML =
       '<span class="eyebrow">' + datos.clasificacion + '</span>' +
       '<h1>Hola ' + datos.nombre + '</h1>' +
+
+      '<div class="alert info"><b>Estado:</b> ' + datos.estadoExplicado + '</div>' +
 
       '<div class="card"><p style="font-size:16px;color:var(--ink);margin:0">' + datos.analisisPersonalizado + '</p></div>' +
 
@@ -54,11 +57,36 @@
 
       (datos.certificadoUrl ? '<p style="text-align:center"><a class="btn btn-primary" href="' + datos.certificadoUrl + '">📄 Ver mi Certificado</a></p>' : '') +
 
+      '<div class="card"><h3>⚙️ Mi información</h3>' +
+      '<p style="font-size:13px">Actualiza tus datos de contacto si cambiaron.</p>' +
+      '<label style="font-size:13px">Teléfono</label>' +
+      '<div class="code-input"><input type="text" id="inputTelefono" value="' + datos.telefono + '">' +
+      '<button class="btn btn-outline btn-sm" onclick="guardarCampo(\'actualizarTelefono\',\'inputTelefono\')">Guardar</button></div>' +
+      '<label style="font-size:13px;margin-top:10px;display:block">Correo</label>' +
+      '<div class="code-input"><input type="text" id="inputEmail" value="' + datos.email + '">' +
+      '<button class="btn btn-outline btn-sm" onclick="guardarCampo(\'actualizarEmail\',\'inputEmail\')">Guardar</button></div>' +
+      '<p id="mensajeGuardado" style="font-size:13px;margin-top:8px"></p></div>' +
+
       '<p class="footer-note">Código: ' + datos.idComprador + '</p>';
+
+    window.CODIGO_PORTAL_ACTUAL = codigo;
   } catch (err) {
     mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
   }
 })();
+
+async function guardarCampo(accion, inputId) {
+  const valor = document.getElementById(inputId).value.trim();
+  if (!valor) return;
+  const msj = document.getElementById('mensajeGuardado');
+  msj.textContent = 'Guardando…';
+  try {
+    const resultado = await ejecutarAccion({ portal: window.CODIGO_PORTAL_ACTUAL, accion: accion, valor: valor });
+    msj.textContent = resultado.error ? '⚠️ ' + resultado.mensaje : '✅ Guardado.';
+  } catch (e) {
+    msj.textContent = '⚠️ No se pudo guardar. Intenta de nuevo.';
+  }
+}
 </script>
 </body>
 </html>

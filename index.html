@@ -38,7 +38,7 @@
       <p>Recibiste un link personal por correo con tu código. Si lo tienes a mano, pégalo aquí:</p>
       <div class="code-input">
         <input type="text" id="codigoComprador" placeholder="Tu código privado">
-        <button class="btn btn-primary btn-sm" onclick="irA('portal.html','codigo','codigoComprador')">Entrar</button>
+        <button class="btn btn-primary btn-sm" onclick="irA('portal.html','codigo','codigoComprador','comprador')">Entrar</button>
       </div>
     </div>
 
@@ -48,7 +48,7 @@
       <p>Recibiste tu Panel de Agente por correo al verificarte. Pega tu código aquí:</p>
       <div class="code-input">
         <input type="text" id="codigoAgente" placeholder="Tu código privado">
-        <button class="btn btn-primary btn-sm" onclick="irA('panel.html','codigo','codigoAgente')">Entrar</button>
+        <button class="btn btn-primary btn-sm" onclick="irA('panel.html','codigo','codigoAgente','agente')">Entrar</button>
       </div>
     </div>
 
@@ -66,11 +66,21 @@
 
 <script src="app.js"></script>
 <script>
-  function irA(pagina, param, inputId) {
+  function irA(pagina, param, inputId, tipo) {
     const valor = document.getElementById(inputId).value.trim();
     if (!valor) return;
+    guardarCodigoRecordado(tipo, valor);
     window.location.href = pagina + '?' + param + '=' + encodeURIComponent(valor);
   }
+
+  // Automatización: si ya usaste tu portal antes en este navegador, te
+  // lleva directo sin tener que volver a pegar el código.
+  (function () {
+    const codigoComprador = obtenerCodigoRecordado('comprador');
+    const codigoAgente = obtenerCodigoRecordado('agente');
+    if (codigoComprador) document.getElementById('codigoComprador').value = codigoComprador;
+    if (codigoAgente) document.getElementById('codigoAgente').value = codigoAgente;
+  })();
 </script>
 </body>
 </html>
