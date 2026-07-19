@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu Panel de Embajador — PropMatchRD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap" id="contenido">
+  <div class="loading"><div class="spinner"></div>Espera un momento, estamos cargando tu panel…</div>
+</div>
+
+<script src="app.js"></script>
+<script>
+(async function () {
+  const codigo = obtenerParametro('codigo') || obtenerParametro('embajador');
+  if (!codigo) { mostrarError('contenido', 'Falta tu código de acceso en el enlace.'); return; }
+
+  try {
+    const datos = await llamarApi({ embajador: codigo });
+    if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+
+    const pasosHtml = datos.pasos.map((p, i) => {
+      const icono = p.hecho ? '✓' : '○';
+      const clase = p.hecho ? 'hecho' : '';
+      return '<div class="ruta-paso ' + clase + '"><div class="ruta-nodo">' + icono + '</div><div class="ruta-texto">' + p.titulo + '</div></div>';
+    }).join('');
+
+    document.getElementById('contenido').innerHTML =
+      '<div style="text-align:center"><span class="badge gold" style="background:#b8860b">🎖️ ' + datos.nivel + '</span></div>' +
+      '<h1 style="text-align:center">Hola ' + datos.nombre + '</h1>' +
+      '<p style="text-align:center;font-family:var(--font-mono);color:var(--text-muted)">Tu código: ' + datos.codigoReferido + '</p>' +
+
+      '<div class="stat-grid">' +
+      '<div class="stat"><span class="num">' + datos.kpis.totalReferidos + '</span><span class="label">Referidos totales</span></div>' +
+      '<div class="stat"><span class="num">' + datos.kpis.validados + '</span><span class="label">Validados</span></div>' +
+      '<div class="stat"><span class="num">' + datos.kpis.cerrados + '</span><span class="label">Cerrados</span></div>' +
+      '<div class="stat"><span class="num">' + formatoRD(datos.kpis.comisionAcumulada) + '</span><span class="label">Comisión acumulada</span></div>' +
+      '</div>' +
+
+      '<div class="card"><h3>Tu progreso</h3><div class="ruta">' + pasosHtml + '</div></div>' +
+
+      '<p class="footer-note">Comparte tu link personalizado para seguir generando referidos.</p>';
+  } catch (err) {
+    mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
+  }
+})();
+</script>
+</body>
+</html>

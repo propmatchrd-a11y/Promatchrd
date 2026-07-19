@@ -87,6 +87,11 @@ async function consultarSolicitud(inputId, mensajeId) {
       window.location.href = 'panel.html?codigo=' + encodeURIComponent(codigo);
       return;
     }
+    const comoEmbajador = await llamarApi({ embajador: codigo });
+    if (!comoEmbajador.error) {
+      window.location.href = 'panel-embajador.html?codigo=' + encodeURIComponent(codigo);
+      return;
+    }
     msj.textContent = '⚠️ No encontramos ninguna solicitud con ese código. Verifica el enlace que recibiste por correo.';
   } catch (e) {
     msj.textContent = '⚠️ Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.';

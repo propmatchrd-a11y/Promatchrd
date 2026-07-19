@@ -57,6 +57,29 @@
 
       (datos.certificadoUrl ? '<p style="text-align:center"><a class="btn btn-primary" href="' + datos.certificadoUrl + '">📄 Ver mi Certificado</a></p>' : '') +
 
+      '<div class="card"><h3>📄 Centro de Documentos</h3>' +
+      '<p style="font-size:13px">Marca lo que ya tienes listo — tu agente lo verá automáticamente.</p>' +
+      construirFilaDocumento('cedula', 'Doc_Cedula', 'Cédula', datos.documentos.cedula) +
+      construirFilaDocumento('cartaTrabajo', 'Doc_Carta_Trabajo', 'Carta de trabajo', datos.documentos.cartaTrabajo) +
+      construirFilaDocumento('estadosCuenta', 'Doc_Estados_Cuenta', 'Estados de cuenta', datos.documentos.estadosCuenta) +
+      '</div>' +
+
+      (datos.calificacionVisitaPendiente ? construirMiniEncuestaVisita() : '') +
+
+      '<div class="card"><h3>🆘 ¿Necesitas algo?</h3>' +
+      '<p style="font-size:13px">Un clic y avisamos a tu agente — sin necesidad de llamar.</p>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+      construirBotonAyuda('Tengo dudas') + construirBotonAyuda('Quiero cambiar de zona') +
+      construirBotonAyuda('Quiero cambiar de agente') + construirBotonAyuda('Quiero reagendar') +
+      '</div><p id="mensajeAyuda" style="font-size:13px;margin-top:8px"></p></div>' +
+
+      '<div class="card"><h3>💡 Mientras esperas</h3>' +
+      '<ul style="font-size:14px">' +
+      '<li>5 errores comunes al comprar tu primera propiedad: no verificar el título, no calcular todos los gastos de cierre, negociar sin preaprobación, saltarse la tasación, y firmar sin un abogado independiente.</li>' +
+      '<li>Documentos que casi siempre te van a pedir: cédula, carta de trabajo o estados de cuenta, y comprobante de la inicial.</li>' +
+      '<li>Mejorar tus posibilidades de aprobación: mantén tus estados de cuenta organizados, evita nuevas deudas mientras tramitas, y ten tu inicial disponible y documentada.</li>' +
+      '</ul></div>' +
+
       '<div class="card"><h3>⚙️ Mi información</h3>' +
       '<p style="font-size:13px">Actualiza tus datos de contacto si cambiaron.</p>' +
       '<label style="font-size:13px">Teléfono</label>' +
@@ -74,6 +97,53 @@
     mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
   }
 })();
+
+function construirFilaDocumento(idSufijo, campo, etiqueta, marcado) {
+  return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)">' +
+    '<input type="checkbox" id="doc_' + idSufijo + '" ' + (marcado ? 'checked' : '') +
+    ' onchange="actualizarDocumento(\'' + campo + '\', this.checked)" style="width:18px;height:18px">' +
+    '<label for="doc_' + idSufijo + '" style="font-size:14px">' + etiqueta + '</label></div>';
+}
+
+async function actualizarDocumento(campo, marcado) {
+  await ejecutarAccion({ portal: window.CODIGO_PORTAL_ACTUAL, accion: 'actualizarDocumento', campo: campo, valor: marcado ? 'Sí' : 'No' });
+}
+
+function construirMiniEncuestaVisita() {
+  return '<div class="card" id="cardEncuestaVisita"><h3>⭐ ¿Cómo fue tu última visita?</h3>' +
+    '<div id="preguntasVisita">' +
+    construirPreguntaVisita('Agente_Puntual', '¿Tu agente llegó puntual?') +
+    construirPreguntaVisita('Agente_Explico_Bien', '¿Explicó bien las opciones?') +
+    construirPreguntaVisita('Recomendaria_Agente', '¿Lo recomendarías?') +
+    '</div></div>';
+}
+
+function construirPreguntaVisita(campo, pregunta) {
+  return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">' +
+    '<span style="font-size:14px">' + pregunta + '</span>' +
+    '<span><button class="btn btn-primary btn-sm" onclick="calificarVisita(\'' + campo + '\',\'Sí\',this)">Sí</button> ' +
+    '<button class="btn btn-outline btn-sm" onclick="calificarVisita(\'' + campo + '\',\'No\',this)">No</button></span></div>';
+}
+
+async function calificarVisita(campo, valor, boton) {
+  await ejecutarAccion({ portal: window.CODIGO_PORTAL_ACTUAL, accion: 'calificarVisita', campo: campo, valor: valor });
+  boton.closest('div').innerHTML = '<span style="font-size:14px">✅ ¡Gracias!</span>';
+}
+
+function construirBotonAyuda(tipo) {
+  return '<button class="btn btn-outline btn-sm" onclick="solicitarAyuda(\'' + tipo + '\')">' + tipo + '</button>';
+}
+
+async function solicitarAyuda(tipo) {
+  const msj = document.getElementById('mensajeAyuda');
+  msj.textContent = 'Enviando…';
+  try {
+    await ejecutarAccion({ portal: window.CODIGO_PORTAL_ACTUAL, accion: 'solicitarAyuda', valor: tipo });
+    msj.textContent = '✅ Le avisamos a tu agente. Te contactará pronto.';
+  } catch (e) {
+    msj.textContent = '⚠️ No se pudo enviar. Intenta de nuevo.';
+  }
+}
 
 async function guardarCampo(accion, inputId) {
   const valor = document.getElementById(inputId).value.trim();
