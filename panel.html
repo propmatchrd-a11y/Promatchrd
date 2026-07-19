@@ -50,6 +50,15 @@
         ? '<div class="alert">⚠️ Tienes ' + datos.comisionesPendientes + ' comisión(es) pendiente(s) de pago. Revisa tu correo.</div>'
         : '') +
 
+      (datos.compradoresCompitiendo && datos.compradoresCompitiendo.length
+        ? '<div class="card"><h3>⚡ En competencia</h3>' +
+          '<p style="font-size:13px">Estos compradores fueron distribuidos a varios agentes al mismo tiempo, incluido tú. ' +
+          'El primero en registrar una visita real se queda con la exclusividad.</p>' +
+          '<table><tr style="font-weight:700"><td>ID</td><td>Nombre</td><td>Clasificación</td></tr>' +
+          datos.compradoresCompitiendo.map(c => '<tr><td>' + c.id + '</td><td>' + c.nombre + '</td><td>' + c.clasificacion + '</td></tr>').join('') +
+          '</table></div>'
+        : '') +
+
       '<div class="card"><h3>Tus compradores activos</h3>' +
       (datos.compradores.length
         ? '<table><tr style="font-weight:700"><td>ID</td><td>Nombre</td><td>IICD</td><td>Ruta</td><td>IPC</td><td>Contacto</td></tr>' + filas + '</table>'
