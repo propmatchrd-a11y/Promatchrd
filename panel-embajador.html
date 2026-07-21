@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tu Panel de Embajador — PropMatchRD</title>
+<title>Panel de Alianza de Referidos — PropMatchRD</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="wrap" id="contenido">
-  <div class="loading"><div class="spinner"></div>Espera un momento, estamos cargando tu panel…</div>
+  <div class="loading"><div class="spinner"></div>Cargando su panel de referidos…</div>
 </div>
 
 <script src="app.js"></script>
 <script>
 (async function () {
   const codigo = obtenerParametro('codigo') || obtenerParametro('embajador');
-  if (!codigo) { mostrarError('contenido', 'Falta tu código de acceso en el enlace.'); return; }
+  if (!codigo) { mostrarError('contenido', 'Falta su código de acceso en el enlace.'); return; }
 
   try {
     const datos = await llamarApi({ embajador: codigo });
@@ -28,68 +28,68 @@
     }).join('');
 
     document.getElementById('contenido').innerHTML =
-      '<div style="text-align:center"><span class="badge gold" style="background:#b8860b">🎖️ ' + datos.nivel + '</span></div>' +
-      '<h1 style="text-align:center">Hola ' + datos.nombre + '</h1>' +
-      '<p style="text-align:center;font-family:var(--font-mono);color:var(--text-muted)">Tu código: ' + datos.codigoReferido + '</p>' +
+      '<div style="text-align:center"><span class="badge gold" style="background:#b8860b">Nivel ' + datos.nivel + '</span></div>' +
+      '<h1 style="text-align:center">Bienvenido(a), ' + datos.nombre + '</h1>' +
+      '<p style="text-align:center;font-family:var(--font-mono);color:var(--text-muted)">Código de referido: ' + datos.codigoReferido + '</p>' +
 
-      '<div class="card" style="text-align:center"><h3>Tu Embassador Score</h3>' +
+      '<div class="card" style="text-align:center"><h3>Índice de Desempeño</h3>' +
       construirGraficoGauge(datos.score, '#b8860b', 110) +
-      '<p style="font-size:12px;color:var(--text-muted);margin-top:6px">Basado en tu tasa de conversión, validación y actividad reciente — no es un premio por antigüedad, sino por resultados.</p></div>' +
+      '<p style="font-size:12px;color:var(--text-muted);margin-top:6px">Calculado a partir de su tasa de conversión, validación de referidos y actividad reciente — refleja resultados, no antigüedad en el programa.</p></div>' +
 
       '<div class="stat-grid">' +
       '<div class="stat"><span class="num">' + datos.kpis.totalReferidos + '</span><span class="label">Referidos totales</span></div>' +
       '<div class="stat"><span class="num">' + datos.kpis.validados + '</span><span class="label">Validados</span></div>' +
-      '<div class="stat"><span class="num">' + datos.kpis.cerrados + '</span><span class="label">Cerrados</span></div>' +
-      '<div class="stat"><span class="num">' + formatoRD(datos.kpis.comisionAcumulada) + '</span><span class="label">Comisión ya cobrada</span></div>' +
+      '<div class="stat"><span class="num">' + datos.kpis.cerrados + '</span><span class="label">Compras completadas</span></div>' +
+      '<div class="stat"><span class="num">' + formatoRD(datos.kpis.comisionAcumulada) + '</span><span class="label">Comisión cobrada</span></div>' +
       '</div>' +
 
       (datos.kpis.comisionReservadaMax > 0
-        ? '<div class="alert info">💰 Tienes ' + formatoRD(datos.kpis.comisionReservadaMin) + ' - ' + formatoRD(datos.kpis.comisionReservadaMax) + ' en comisión <b>reservada</b> — de referidos que ya están en proceso pero aún no han cerrado.</div>'
+        ? '<div class="alert info">Tiene entre ' + formatoRD(datos.kpis.comisionReservadaMin) + ' y ' + formatoRD(datos.kpis.comisionReservadaMax) + ' en comisión <b>reservada</b>, correspondiente a referidos en proceso que aún no han completado una compra.</div>'
         : '') +
 
-      '<div class="card"><h3>Tu embudo de referidos</h3>' +
+      '<div class="card"><h3>Embudo de referidos</h3>' +
       construirGraficoBarras([
         { etiqueta: 'Referidos totales', valor: datos.kpis.totalReferidos, color: '#0f7a6b' },
         { etiqueta: 'Validados', valor: datos.kpis.validados, color: '#1a73e8' },
-        { etiqueta: 'Cerrados (ganaste comisión)', valor: datos.kpis.cerrados, color: '#e4572e' }
+        { etiqueta: 'Compras completadas', valor: datos.kpis.cerrados, color: '#e4572e' }
       ]) + '</div>' +
 
       (datos.referidos && datos.referidos.length
-        ? '<div class="card"><h3>Tus referidos</h3>' +
-          '<p style="font-size:12px;color:var(--text-muted)">Por privacidad, no mostramos teléfono, correo ni presupuesto de tus referidos.</p>' +
+        ? '<div class="card"><h3>Sus referidos</h3>' +
+          '<p style="font-size:12px;color:var(--text-muted)">Por confidencialidad, no se muestra teléfono, correo ni presupuesto de sus referidos.</p>' +
           '<table><tr style="font-weight:700"><td>Nombre</td><td>Estado</td><td>Fecha</td></tr>' +
           datos.referidos.map(r => '<tr><td>' + r.nombre + '</td><td>' + r.estado + '</td><td>' + new Date(r.fecha).toLocaleDateString('es-DO') + '</td></tr>').join('') +
           '</table></div>'
         : '') +
 
-      '<div class="card"><h3>💰 Cómo se calcula tu comisión</h3>' +
-      '<p style="font-size:13px">Tu comisión sale de un fondo <b>separado</b> del que gana la plataforma con el agente — ' +
-      'nunca le quita nada al agente. El fondo es el ' + datos.comision.pctBasePool + '% del monto de venta, y tú ganas el ' +
-      '<b>' + datos.comision.pctEmbajadorEfectivo + '%</b> de ese fondo' +
+      '<div class="card"><h3>Estructura de su comisión</h3>' +
+      '<p style="font-size:13px">Su comisión proviene de un fondo <b>independiente</b> del que la plataforma percibe por la gestión del agente — ' +
+      'no reduce en ningún caso lo que corresponde al agente. Este fondo equivale al ' + datos.comision.pctBasePool + '% del monto de venta, y a usted le corresponde el ' +
+      '<b>' + datos.comision.pctEmbajadorEfectivo + '%</b> de dicho fondo' +
       (datos.comision.calificaParaBono
-        ? ' — <b>ya incluye tu bono de alto desempeño</b> (+' + datos.comision.pctBonoAltoDesempeno + '% por tener Score ≥ ' + datos.comision.scoreMinimoBono + ').</p>'
-        : '. Si tu Score llega a ' + datos.comision.scoreMinimoBono + ' o más, ganas un bono adicional de +' + datos.comision.pctBonoAltoDesempeno + '% (hoy tienes ' + datos.score + ').</p>') +
+        ? ' — cifra que <b>ya incluye su bono de alto desempeño</b> (+' + datos.comision.pctBonoAltoDesempeno + '% por mantener un Índice de Desempeño de ' + datos.comision.scoreMinimoBono + ' o superior).</p>'
+        : '. Al alcanzar un Índice de Desempeño de ' + datos.comision.scoreMinimoBono + ' o superior, accede a un bono adicional de +' + datos.comision.pctBonoAltoDesempeno + '% (actualmente se encuentra en ' + datos.score + ').</p>') +
 
-      '<h4 style="margin-bottom:6px">Calcula tu comisión estimada</h4>' +
+      '<h4 style="margin-bottom:6px">Simulador de comisión</h4>' +
       '<div class="code-input"><input type="text" id="inputMontoVenta" value="5000000" inputmode="numeric">' +
       '<button class="btn btn-primary btn-sm" onclick="calcularComisionEstimada()">Calcular</button></div>' +
       '<p id="resultadoCalculadora" style="font-size:15px;margin-top:10px;font-weight:600"></p></div>' +
 
       (datos.mensajePersonalizado
-        ? '<div class="card"><h3>💬 Tu mensaje sugerido</h3>' +
-          '<p style="font-size:13px">Generado para tu canal principal — cópialo y compártelo cuando quieras.</p>' +
+        ? '<div class="card"><h3>Mensaje de presentación sugerido</h3>' +
+          '<p style="font-size:13px">Redactado para el canal que usted indicó al registrarse — puede copiarlo y personalizarlo libremente.</p>' +
           '<p id="mensajeIA" style="background:#fff8e6;padding:12px;border-radius:6px;font-style:italic">' + datos.mensajePersonalizado + '</p>' +
-          '<button class="btn btn-outline btn-sm" onclick="copiarMensaje()">📋 Copiar mensaje</button>' +
+          '<button class="btn btn-outline btn-sm" onclick="copiarMensaje()">Copiar mensaje</button>' +
           '<span id="copiadoOk" style="font-size:13px;margin-left:8px"></span></div>'
         : '') +
 
-      '<div class="card"><h3>Tu progreso</h3><div class="ruta">' + pasosHtml + '</div></div>' +
+      '<div class="card"><h3>Su progreso</h3><div class="ruta">' + pasosHtml + '</div></div>' +
 
-      '<p class="footer-note">Comparte tu link personalizado para seguir generando referidos.</p>';
+      '<p class="footer-note">Comparta su enlace personalizado para seguir generando referidos calificados.</p>';
 
     window.DATOS_COMISION_ACTUAL = datos.comision;
   } catch (err) {
-    mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
+    mostrarError('contenido', 'Ocurrió un problema de conexión. Intente de nuevo en unos minutos.');
   }
 })();
 
@@ -97,22 +97,22 @@ function calcularComisionEstimada() {
   const monto = Number(document.getElementById('inputMontoVenta').value.replace(/[^0-9]/g, '')) || 0;
   const c = window.DATOS_COMISION_ACTUAL;
   if (!c || monto <= 0) {
-    document.getElementById('resultadoCalculadora').textContent = 'Ingresa un monto válido.';
+    document.getElementById('resultadoCalculadora').textContent = 'Ingrese un monto válido.';
     return;
   }
   const pool = monto * (c.pctBasePool / 100);
   const ganancia = pool * (c.pctEmbajadorEfectivo / 100);
   document.getElementById('resultadoCalculadora').innerHTML =
-    'Con una venta de ' + formatoRD(monto) + ', ganarías aproximadamente <span style="color:#b8860b">' + formatoRD(Math.round(ganancia)) + '</span>.';
+    'Con una venta de ' + formatoRD(monto) + ', su comisión estimada sería de <span style="color:#b8860b">' + formatoRD(Math.round(ganancia)) + '</span>.';
 }
 
 async function copiarMensaje() {
   const texto = document.getElementById('mensajeIA').textContent;
   try {
     await navigator.clipboard.writeText(texto);
-    document.getElementById('copiadoOk').textContent = '✅ ¡Copiado!';
+    document.getElementById('copiadoOk').textContent = 'Copiado correctamente.';
   } catch (e) {
-    document.getElementById('copiadoOk').textContent = 'No se pudo copiar automáticamente — selecciona el texto manualmente.';
+    document.getElementById('copiadoOk').textContent = 'No se pudo copiar automáticamente — seleccione el texto manualmente.';
   }
 }
 </script>
