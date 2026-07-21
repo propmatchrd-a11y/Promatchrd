@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu Solicitud de Alquiler — PropMatchRD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap" id="contenido">
+  <div class="loading"><div class="spinner"></div>Cargando tu solicitud…</div>
+</div>
+
+<script src="app.js"></script>
+<script>
+(async function () {
+  const codigo = obtenerParametro('codigo') || obtenerParametro('portalAlquiler');
+  if (!codigo) { mostrarError('contenido', 'Falta tu código de acceso en el enlace.'); return; }
+
+  try {
+    const datos = await llamarApi({ portalAlquiler: codigo });
+    if (datos.error) { mostrarError('contenido', datos.mensaje); return; }
+
+    const iconos = { Diamante: '💎', Oro: '🥇', Plata: '🥈', Bronce: '🥉' };
+
+    document.getElementById('contenido').innerHTML =
+      '<h1 style="text-align:center">Hola ' + datos.nombre + '</h1>' +
+      '<p style="text-align:center;font-family:var(--font-mono);color:var(--text-muted)">Solicitud: ' + datos.idSolicitud + '</p>' +
+
+      '<div class="card" style="text-align:center">' +
+      '<h3>' + datos.estadoExplicado + '</h3>' +
+      (datos.agenteAsignado ? '<p>Tu agente: <b>' + datos.agenteAsignado + '</b></p>' : '') +
+      '</div>' +
+
+      (datos.evaluacion
+        ? '<div class="card"><h3>Tu evaluación</h3><p>' + datos.evaluacion + '</p></div>'
+        : '') +
+
+      '<div class="card"><h3>Tu búsqueda</h3>' +
+      '<table>' +
+      '<tr><td style="padding:4px 8px;color:var(--text-muted)">Tipo de inmueble</td><td style="padding:4px 8px"><b>' + datos.tipoInmueble + '</b></td></tr>' +
+      '<tr><td style="padding:4px 8px;color:var(--text-muted)">Zona</td><td style="padding:4px 8px"><b>' + datos.provincia + ' - ' + datos.municipio + '</b></td></tr>' +
+      '<tr><td style="padding:4px 8px;color:var(--text-muted)">Presupuesto mensual</td><td style="padding:4px 8px"><b>' + formatoRD(datos.presupuestoMin) + ' - ' + formatoRD(datos.presupuestoMax) + '</b></td></tr>' +
+      '<tr><td style="padding:4px 8px;color:var(--text-muted)">Clasificación</td><td style="padding:4px 8px"><b>' + (iconos[datos.clasificacion] || '') + ' ' + datos.clasificacion + '</b></td></tr>' +
+      '</table></div>' +
+
+      '<p class="footer-note">¿Dudas? Contáctanos por WhatsApp desde el botón flotante.</p>';
+  } catch (err) {
+    mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
+  }
+})();
+</script>
+</body>
+</html>
