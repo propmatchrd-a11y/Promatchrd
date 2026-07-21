@@ -26,15 +26,19 @@
       '<div style="text-align:center;padding-top:40px">' +
       '<span class="eyebrow">Invitación personal</span>' +
       '<h1>' + saludo + '</h1>' +
-      '<p>Te conectamos con un agente inmobiliario verificado en menos de 3 minutos.</p>' +
+      '<p>Te conectamos con un agente inmobiliario verificado en menos de 3 minutos. ¿Qué estás buscando?</p>' +
+      '<div class="hero-btns" style="justify-content:center;margin-top:24px">' +
       (datos.linkFormularioComprador
-        ? '<p style="margin-top:24px"><a class="btn btn-primary" href="' + datos.linkFormularioComprador + '">Comenzar ahora →</a></p>'
-        : '<p style="color:var(--coral)">Este enlace no está disponible en este momento.</p>') +
+        ? '<a class="btn btn-coral" href="' + datos.linkFormularioComprador + '">🏠 Quiero comprar</a>'
+        : '') +
+      (datos.linkFormularioAlquiler
+        ? '<a class="btn btn-primary" href="' + datos.linkFormularioAlquiler + '">🔑 Busco alquiler</a>'
+        : '') +
+      '</div>' +
+      (!datos.linkFormularioComprador && !datos.linkFormularioAlquiler
+        ? '<p style="color:var(--coral)">Este enlace no está disponible en este momento.</p>'
+        : '') +
       '</div>';
-
-    if (datos.linkFormularioComprador) {
-      setTimeout(() => { window.location.href = datos.linkFormularioComprador; }, 4000);
-    }
   } catch (err) {
     mostrarError('contenido', 'Ocurrió un problema de conexión. Intenta de nuevo en unos minutos.');
   }
