@@ -28,7 +28,8 @@
       '<b style="font-size:15px">' + c.nombre + '</b>' +
       '<span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">' + c.id + '</span>' +
       '</div>' +
-      '<div style="font-size:13px;margin-bottom:6px"><b>' + c.iicdScore + '/100</b> ' + c.iicdEtiqueta + ' · ' + c.etapaRutaCompra + ' · ' + c.ipcEtiqueta + '</div>' +
+      '<div style="font-size:13px;margin-bottom:4px"><b>' + c.iicdScore + '/100</b> ' + c.iicdEtiqueta + ' · ' + c.etapaRutaCompra + ' · ' + c.ipcEtiqueta + '</div>' +
+      '<div style="font-size:13px;margin-bottom:6px;color:#b8860b">💰 Comisión estimada si cierras: <b>' + formatoRD(c.comisionEstMin) + ' - ' + formatoRD(c.comisionEstMax) + '</b></div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">' +
       (c.contactoPendiente
         ? '<button class="btn btn-primary btn-sm" onclick="cargarPanel(\'' + c.id + '\')">Marcar contacto</button>'
@@ -70,6 +71,7 @@
             '<b style="font-size:15px">' + c.nombre + '</b>' +
             '<span style="font-size:12px;background:var(--sand-deep);padding:2px 10px;border-radius:100px">' + c.clasificacion + '</span>' +
             '</div>' +
+            '<div style="font-size:13px;margin-bottom:8px;color:#b8860b">💰 Comisión estimada: <b>' + formatoRD(c.comisionEstMin) + ' - ' + formatoRD(c.comisionEstMax) + '</b></div>' +
             '<button class="btn btn-primary btn-sm" onclick="abrirAccionRapida(\'visita\',\'' + c.id + '\',\'' + c.nombre.replace(/'/g, "\\'") + '\')">📝 Ganar con visita</button>' +
             '</div>'
           ).join('') +
@@ -92,6 +94,7 @@
             '<b style="font-size:15px">' + a.nombre + '</b>' +
             '<span style="font-size:12px;background:var(--sand-deep);padding:2px 10px;border-radius:100px">' + a.clasificacion + '</span>' +
             '</div>' +
+            '<div style="font-size:13px;margin-bottom:8px;color:#b8860b">💰 Comisión estimada: <b>' + formatoRD(a.comisionEstMin) + ' - ' + formatoRD(a.comisionEstMax) + '</b></div>' +
             '<button class="btn btn-primary btn-sm" onclick="abrirAccionRapida(\'cierreAlquiler\',\'' + a.id + '\',\'' + a.nombre.replace(/'/g, "\\'") + '\')">✅ Ganar con cierre</button>' +
             '</div>'
           ).join('') +
@@ -106,12 +109,33 @@
             '<b style="font-size:15px">' + a.nombre + '</b>' +
             '<span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">' + a.id + '</span>' +
             '</div>' +
-            '<div style="font-size:13px;margin-bottom:8px">' + a.zona + ' · ' + a.presupuesto + ' · ' + a.clasificacion + '</div>' +
+            '<div style="font-size:13px;margin-bottom:4px">' + a.zona + ' · ' + a.presupuesto + ' · ' + a.clasificacion + '</div>' +
+            '<div style="font-size:13px;margin-bottom:8px;color:#b8860b">💰 Comisión estimada si cierras: <b>' + formatoRD(a.comisionEstMin) + ' - ' + formatoRD(a.comisionEstMax) + '</b></div>' +
             '<button class="btn btn-outline btn-sm" onclick="abrirAccionRapida(\'cierreAlquiler\',\'' + a.id + '\',\'' + a.nombre.replace(/'/g, "\\'") + '\')">✅ Cerrar</button>' +
             '</div>'
           ).join('')
         : '<p>No tienes alquileres asignados en este momento.</p>') +
       '</div>' +
+
+      (datos.misComisiones && datos.misComisiones.length
+        ? '<div class="card"><h3>💰 Tus comisiones</h3>' +
+          '<p style="font-size:12px;color:var(--text-muted)">Cierres ya confirmados — el pago se coordina por transferencia bancaria, fuera del sistema.</p>' +
+          datos.misComisiones.map(m => {
+            let colorEstado = '#999', textoEstado = m.estado;
+            if (m.estado === 'Pagado') { colorEstado = '#0f7a6b'; textoEstado = '✅ Pagada'; }
+            else if (m.estado === 'En revisión') { colorEstado = '#e4572e'; textoEstado = '⚠️ En revisión'; }
+            else { textoEstado = '⏳ Pendiente de pago'; colorEstado = '#b8860b'; }
+            return '<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px">' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+              '<b style="font-size:15px">' + m.id + '</b>' +
+              '<span style="font-size:12px;background:var(--sand-deep);padding:2px 10px;border-radius:100px">' + m.tipo + '</span>' +
+              '</div>' +
+              '<div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">' + new Date(m.fecha).toLocaleDateString('es-DO') + '</div>' +
+              '<div style="font-size:16px"><b style="color:' + colorEstado + '">' + formatoRD(m.monto) + '</b> · ' + textoEstado + '</div>' +
+              '</div>';
+          }).join('') +
+          '</div>'
+        : '') +
 
       '<div class="card"><h3>⚙️ Mi disponibilidad</h3>' +
       '<p style="font-size:13px">Desactívala si no puedes recibir compradores nuevos ahora (vacaciones, sobrecarga, etc.) — se reactiva cuando quieras, sin depender del admin.</p>' +
