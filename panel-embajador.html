@@ -63,19 +63,22 @@ function pintarPanel(datos) {
     (datos.referidos && datos.referidos.length
       ? '<div class="card"><h3>Tus referidos</h3>' +
         '<p style="font-size:12px;color:var(--text-muted)">Por privacidad, no mostramos teléfono, correo ni presupuesto de tus referidos.</p>' +
-        '<table class="responsive"><thead><tr style="font-weight:700"><td>Nombre</td><td>Tipo</td><td>Estado</td><td>Comisión</td><td>Fecha</td></tr></thead>' +
         datos.referidos.map(r => {
           let comisionTexto = '<span style="color:#999">Aún sin estimar</span>';
-          let claseFila = '';
           if (r.comisionPagada) { comisionTexto = '<b style="color:#0f7a6b">✅ Pagada</b>'; }
           else if (r.comisionMin !== null) {
             comisionTexto = '<b style="color:#b8860b">' + formatoRD(r.comisionMin) + ' - ' + formatoRD(r.comisionMax) + '</b>';
           }
-          return '<tr><td data-label="Nombre" class="fila-titulo">' + r.nombre + '</td><td data-label="Tipo">' + r.tipo + '</td>' +
-            '<td data-label="Estado">' + r.estado + '</td><td data-label="Comisión">' + comisionTexto + '</td>' +
-            '<td data-label="Fecha">' + new Date(r.fecha).toLocaleDateString('es-DO') + '</td></tr>';
+          return '<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+            '<b style="font-size:15px">' + r.nombre + '</b>' +
+            '<span style="font-size:12px;background:var(--sand-deep);padding:2px 10px;border-radius:100px">' + r.tipo + '</span>' +
+            '</div>' +
+            '<div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">' + r.estado + ' · ' + new Date(r.fecha).toLocaleDateString('es-DO') + '</div>' +
+            '<div style="font-size:14px">' + comisionTexto + '</div>' +
+            '</div>';
         }).join('') +
-        '</table></div>'
+        '</div>'
       : '') +
 
     '<div class="card"><h3>Cómo se calcula tu comisión</h3>' +
