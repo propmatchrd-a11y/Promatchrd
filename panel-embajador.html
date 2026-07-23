@@ -63,18 +63,23 @@ function pintarPanel(datos) {
     (datos.referidos && datos.referidos.length
       ? '<div class="card"><h3>Tus referidos</h3>' +
         '<p style="font-size:12px;color:var(--text-muted)">Por privacidad, no mostramos teléfono, correo ni presupuesto de tus referidos.</p>' +
-        '<table><tr style="font-weight:700"><td>Nombre</td><td>Tipo</td><td>Estado</td><td>Fecha</td></tr>' +
-        datos.referidos.map(r => '<tr><td>' + r.nombre + '</td><td>' + r.tipo + '</td><td>' + r.estado + '</td><td>' + new Date(r.fecha).toLocaleDateString('es-DO') + '</td></tr>').join('') +
+        '<table><tr style="font-weight:700"><td>Nombre</td><td>Tipo</td><td>Estado</td><td>Comisión</td><td>Fecha</td></tr>' +
+        datos.referidos.map(r => {
+          let comisionTexto = '—';
+          if (r.comisionPagada) comisionTexto = '✅ Pagada';
+          else if (r.comisionMin !== null) comisionTexto = formatoRD(r.comisionMin) + ' - ' + formatoRD(r.comisionMax);
+          return '<tr><td>' + r.nombre + '</td><td>' + r.tipo + '</td><td>' + r.estado + '</td><td>' + comisionTexto + '</td><td>' + new Date(r.fecha).toLocaleDateString('es-DO') + '</td></tr>';
+        }).join('') +
         '</table></div>'
       : '') +
 
     '<div class="card"><h3>Cómo se calcula tu comisión</h3>' +
-    '<p style="font-size:13px">Tu comisión sale de un fondo <b>separado</b> del que gana la plataforma con el agente — ' +
-    'nunca le quita nada al agente. El fondo es el ' + datos.comision.pctBasePool + '% del monto de venta, y tú ganas el ' +
-    '<b>' + datos.comision.pctEmbajadorEfectivo + '%</b> de ese fondo' +
+    '<p style="font-size:13px">Cada vez que uno de tus referidos compra, ganas dinero — y esto <b>nunca le quita nada al agente</b>, ' +
+    'porque sale de una parte que la plataforma aparta especialmente para ti.</p>' +
+    '<p style="font-size:13px">Ahora mismo, ganas el <b>' + datos.comision.pctEmbajadorEfectivo + '%</b> de esa parte' +
     (datos.comision.calificaParaBono
-      ? ' — ya incluye tu bono por buen desempeño (+' + datos.comision.pctBonoAltoDesempeno + '% por tener un nivel de ' + datos.comision.scoreMinimoBono + ' o más).</p>'
-      : '. Si tu nivel llega a ' + datos.comision.scoreMinimoBono + ' o más, ganas un bono adicional de +' + datos.comision.pctBonoAltoDesempeno + '% (hoy tienes ' + datos.score + ').</p>') +
+      ? ' — ya incluye tu bono por buen desempeño, porque tu nivel está en ' + datos.score + ' (se necesita ' + datos.comision.scoreMinimoBono + ' o más).</p>'
+      : '. Si tu nivel sube a ' + datos.comision.scoreMinimoBono + ' o más, ganas un ' + datos.comision.pctBonoAltoDesempeno + '% extra. Hoy tu nivel es ' + datos.score + '.</p>') +
 
     '<h4 style="margin-bottom:6px">Calcula tu comisión estimada</h4>' +
     '<div class="code-input"><input type="text" id="inputMontoVenta" value="5000000" inputmode="numeric">' +
