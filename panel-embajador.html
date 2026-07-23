@@ -44,6 +44,7 @@ function pintarPanel(datos) {
 
     '<div class="stat-grid">' +
     '<div class="stat"><span class="num">' + datos.kpis.totalReferidos + '</span><span class="label">Referidos totales</span></div>' +
+    '<div class="stat"><span class="num">' + ((datos.referidos || []).filter(r => r.tipo === 'Alquiler').length) + '</span><span class="label">🔑 Buscan alquiler</span></div>' +
     '<div class="stat"><span class="num">' + datos.kpis.validados + '</span><span class="label">Validados</span></div>' +
     '<div class="stat"><span class="num">' + datos.kpis.cerrados + '</span><span class="label">Compras completadas</span></div>' +
     '<div class="stat"><span class="num">' + formatoRD(datos.kpis.comisionAcumulada) + '</span><span class="label">Comisión cobrada</span></div>' +
