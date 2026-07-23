@@ -30,6 +30,13 @@
 
       '<div class="alert info"><b>Estado:</b> ' + datos.estadoExplicado + '</div>' +
 
+      (datos.agenteLinkWhatsApp
+        ? '<div class="card" style="text-align:center">' +
+          '<p style="font-size:14px;margin-bottom:8px">Tu agente: <b>' + datos.agenteNombre + '</b></p>' +
+          '<a href="' + datos.agenteLinkWhatsApp + '" target="_blank" class="btn" style="background:#25D366;color:white;text-decoration:none;display:inline-block">💬 Contactar a mi agente</a>' +
+          '</div>'
+        : '') +
+
       '<div class="card"><p style="font-size:16px;color:var(--ink);margin:0">' + datos.analisisPersonalizado + '</p></div>' +
 
       '<div class="card" style="text-align:center">' +

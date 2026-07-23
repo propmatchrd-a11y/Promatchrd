@@ -30,6 +30,9 @@
       '<div class="card" style="text-align:center">' +
       '<h3>' + datos.estadoExplicado + '</h3>' +
       (datos.agenteAsignado ? '<p>Tu agente: <b>' + datos.agenteAsignado + '</b></p>' : '') +
+      (datos.agenteLinkWhatsApp
+        ? '<p><a href="' + datos.agenteLinkWhatsApp + '" target="_blank" class="btn" style="background:#25D366;color:white;text-decoration:none;display:inline-block">💬 Contactar a mi agente</a></p>'
+        : '') +
       '</div>' +
 
       (datos.evaluacion
